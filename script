@@ -1,0 +1,63 @@
+---
+
+Create a table using multiple tables
+---
+
+Create TABLE test AS
+SELECT
+active_users.month,
+active_users.country,
+webroleid,
+active_users,
+adspend,
+order_type,
+amount,
+number_payments
+FROM active_users
+INNER JOIN adspend_data
+ON active_users.month = adspend_data.month
+INNER JOIN revenue_data
+ON adspend_data.month = adspend_data.month;
+
+---
+
+select Country, COUNT(*) AS Number 
+from test 
+Group by country;
+
+---
+
+select order_type, COUNT(*) AS Number 
+from test 
+Group by order_type;
+
+---
+
+select country, SUM(adspend)   
+from test 
+Group by country;
+
+---
+
+Export table as csv file
+---
+
+select SUM(amount)   
+from test 
+;
+---
+Data exploratory query
+---
+
+select
+* 
+from
+  (select
+     month, adspend, country,
+     rank() OVER (
+            PARTITION BY country
+            ORDER BY country DESC
+        )
+        FROM test
+        WHERE amount < 15000
+    ) rank_filter WHERE RANK = 1;
